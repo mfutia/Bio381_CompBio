@@ -1,5 +1,5 @@
 ---
-title: "Homework_02.Rmd"
+title: "Bio381: Computational Biology"
 author: "Matt Futia"
 date: "2/9/2021"
 output: html_document
@@ -9,4 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-I still have two baby teeth (adult teeth failed to develop)
+
+## Homework Assignments
+
+### Weeks 1-2: *No assignments due*
+
+### Week 3: [Homework3](Homework/Homework3.html) (not completed yet)
+
