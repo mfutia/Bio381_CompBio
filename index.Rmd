@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## Homework Assignments
+[Homework schedule](https://gotellilab.github.io/Bio381/)
 
 ### Weeks 1-2: *No assignments due*
 
