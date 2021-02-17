@@ -133,4 +133,4 @@ Myrpun, 4, 12.2
 Lasneo, 55, 3.3
 ```
 
-by replacing `(\w{3})\w+,(\w{3})\w+,(\d+.\d),(\d+)` with \1\2, \4, \3
+by replacing `(\w{3})\w+,(\w{3})\w+,(\d+.\d),(\d+)` with `\1\2, \4, \3`
