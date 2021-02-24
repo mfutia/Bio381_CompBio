@@ -1,7 +1,7 @@
 ---
 title: "Bio381: Computational Biology"
 author: "Matt Futia"
-date: "2/9/2021"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_document
 ---
 
@@ -13,7 +13,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Homework Assignments
 [Homework schedule](https://gotellilab.github.io/Bio381/)
 
-### Weeks 1-2: *No assignments due*
+---
 
-### Week 3: [Homework3](Homework/Homework3.html)
+### Weeks 1-2: 
+*No assignments due*
 
+### Week 3: 
+[Homework3](Homework/Homework3.html)
+
+### Week 4: 
+[Homework4_Typora](Homework/Homework4/Homework4_Typora.html)   
+[Homework4_LetterTemplate](Homework/Homework4/Homework4_Letter.pdf)   
+[Homework4_BeamerTemplate](Homework/Homework4/Homework4_Beamer.pdf)   
