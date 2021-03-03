@@ -24,4 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Week 4: 
 [Homework4_Typora](Homework/Homework4/Homework4_Typora.html)   
 [Homework4_LetterTemplate](Homework/Homework4/Homework4_Letter.pdf)   
-[Homework4_BeamerTemplate](Homework/Homework4/Homework4_Beamer.pdf)   
+[Homework4_BeamerTemplate](Homework/Homework4/Homework4_Beamer.pdf)
+
+### Week 5:
+[Homework5_VectorsInR](Homework/Homework5_Futia.html)
