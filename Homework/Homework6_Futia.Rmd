@@ -1,0 +1,103 @@
+---
+title: 'Homework 6: Matrices, lists, and data frames'
+author: "Matt Futia"
+date: "3/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Part 1
+```{r}
+# Single random integer between 3 and 10
+n_dims <- sample(3:10,1); n_dims
+
+# Vector from 1 to squared value of random integer
+vec1 <- 1:n_dims^2
+
+# Random shuffling of vector
+vec2 <- sample(vec1)
+
+# Square matrix of shuffled vector
+mat1 <- matrix(vec2, nrow = sqrt(length(vec2)))
+
+print(mat1)
+```
+
+```{r}
+# Transpose matrix
+mat2 <- t(mat1)
+print(mat2)
+```
+By transposing the original matrix, the row values have become the column values and vice versa.
+
+```{r}
+# Sum and mean of the first and fourth columns of the transposed matrix
+dat1 <- c("sum1" = sum(mat2[,1]),
+          "mean1" = mean(mat2[,1]),
+          "sum4" = sum(mat2[,4]),
+          "mean4" = mean(mat2[,4]))
+dat1
+```
+
+```{r}
+# Compute eigenvalues and eigenvectors of the transposed matrix
+egn <- eigen(mat2)
+
+egn$values
+
+egn$vectors
+
+typeof(egn$values)
+
+typeof(egn$vectors)
+```
+The elements of the eigenvalues and eigenvectors are complex numbers (summation of two values) represented as a list (values) or a matrix (vectors)
+
+---
+
+## Part 2
+```{r}
+# Create a list containing a matrix, logical vector, and vector of letters
+my_list <- list(my_matrix = matrix(data = sample(1:100,16), nrow = 4),
+             my_logical = duplicated(sample(1:100,100,replace = T)),
+             my_letters = sample(letters,26))
+
+# Create a list containing values from the first list
+my_list2 <- list(my_list$my_matrix[2,2],
+                 my_list$my_logical[2],
+                 my_list$my_letters[2])
+
+# Determine the data types for the components of the second list
+sapply(my_list2, typeof)
+
+# Combine data types of second list into a vector and determine the data type of the vector
+elements <- c("integer", "logical", "character")
+
+typeof(elements)
+```
+The vector representing the data types of the elements found in list 2 is itself a character string.
+
+---
+
+## Part 3
+```{r}
+# Create a data frame with 2 variables and 26 cases
+my_df <- data.frame(my_unis = sample(0:10, 26, replace = T),
+                    my_letters = sample(LETTERS, 26))
+
+# Replace 4 random values in the first variable list with NA
+my_df$my_unis[sample(nrow(my_df),4)] = NA
+
+# Identify rows that are NA
+which(is.na(my_df$my_unis))
+
+# Sort second variable in alphabetical order
+my_df2 <- my_df[order(my_df$my_letters),]
+
+# Calculate mean of first variable
+mean(my_df$my_unis, na.rm = T)
+```
