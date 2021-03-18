@@ -28,9 +28,9 @@ summary(z$myVar)
 Read in personal data (lake trout length)
 
 ```{r}
-lt <- read.table("lt_dat.csv", header = T, sep = ",", stringsAsFactors = F)
+lt <- read.table("C:/Users/mttft/Desktop/UVM/UVM Courses/Comp_Bio/FutiaBio381/lt_dat.csv", header = T, sep = ",", stringsAsFactors = F)
 str(lt)
-colnames(lt) <- "myVar"
+colnames(lt) <- c("number","myVar")
 summary(lt)
 ```
 
