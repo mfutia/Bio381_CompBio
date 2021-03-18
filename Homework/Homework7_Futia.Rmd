@@ -1,0 +1,176 @@
+---
+title: 'Homework 7: Data Distributions'
+author: "Matt Futia"
+date: "3/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Open libraries
+library(ggplot2) # for graphics
+library(MASS) # for maximum likelihood estimation
+```
+
+Generate practice data
+```{r}
+z <- rnorm(n=3000,mean=0.2)
+z <- data.frame(1:3000,z)
+names(z) <- list("ID","myVar")
+z <- z[z$myVar>0,]
+str(z)
+summary(z$myVar)
+```
+
+Read in personal data (lake trout length)
+
+```{r}
+lt <- read.table("lt_dat.csv", header = T, sep = ",", stringsAsFactors = F)
+str(lt)
+colnames(lt) <- "myVar"
+summary(lt)
+```
+
+Histogram of data
+```{r}
+p1 <- ggplot(data=lt, aes(x=myVar, y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) 
+print(p1)
+```
+
+Histogram with empirical density curve
+```{r}
+p1 <-  p1 +  geom_density(linetype="dotted",size=0.75)
+print(p1)
+```
+
+Normal probability density
+```{r}
+# Maximum likelihood parameters for normal
+normPars <- fitdistr(lt$myVar,"normal")
+print(normPars)
+str(normPars)
+normPars$estimate["mean"] # note structure of getting a named attribute
+
+meanML <- normPars$estimate["mean"]
+sdML <- normPars$estimate["sd"]
+
+xval <- seq(0,max(lt$myVar),len=length(lt$myVar))
+
+stat <- stat_function(aes(x = xval, y = ..y..),
+                      fun = dnorm, 
+                      color="red",
+                      n = length(lt$myVar), 
+                      args = list(mean = meanML, sd = sdML))
+p1 + stat
+```
+
+Exponential probability density
+```{r}
+expoPars <- fitdistr(lt$myVar,"exponential")
+rateML <- expoPars$estimate["rate"]
+
+stat2 <- stat_function(aes(x = xval, y = ..y..),
+                       fun = dexp, 
+                       colour="blue",
+                       n = length(lt$myVar), 
+                       args = list(rate=rateML))
+p1 + stat + stat2
+```
+
+Uniform probability density
+```{r}
+stat3 <- stat_function(aes(x = xval, y = ..y..), 
+                       fun = dunif, colour="darkgreen", 
+                       n = length(lt$myVar), 
+                       args = list(min=min(lt$myVar), max=max(lt$myVar)))
+
+p1 + stat + stat2 + stat3
+```
+
+
+Gamma probability density
+```{r}
+gammaPars <- fitdistr(lt$myVar,"gamma")
+shapeML <- gammaPars$estimate["shape"]
+rateML <- gammaPars$estimate["rate"]
+
+stat4 <- stat_function(aes(x = xval, y = ..y..),
+                       fun = dgamma,
+                       color="brown",
+                       n = length(lt$myVar),
+                       args = list(shape=shapeML, rate=rateML))
+
+p1 + stat + stat2 + stat3 + stat4
+```
+
+Beta probability density
+```{r}
+# make in new plot with rescaled raw data between 0 and 1 for comparison to the beta
+pSpecial <- ggplot(data=lt, aes(x=myVar/(max(myVar + 0.1)), y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) + 
+  xlim(c(0,1)) +
+  geom_density(size=0.75,linetype="dotted")
+
+# Maximum likelihood parameters for beta distribution
+betaPars <- fitdistr(x=lt$myVar/max(lt$myVar + 0.1),start=list(shape1=1,shape2=2),"beta")
+shape1ML <- betaPars$estimate["shape1"]; shape1ML
+shape2ML <- betaPars$estimate["shape2"]; shape2ML
+
+statSpecial <- stat_function(aes(x = xval, y = ..y..), 
+                             fun = dbeta, colour="orchid",
+                             n = length(lt$myVar), 
+                             args = list(shape1=shape1ML,shape2=shape2ML))
+pSpecial + statSpecial
+```
+
+Best-fitting distribution: beta distribution
+
+Max likelihood parameters from beta distribution
+```{r}
+# max likelihood parameters
+shape1ML
+shape2ML
+
+shp1 <- betaPars$estimate["shape1"]
+shp2 <- betaPars$estimate["shape2"]
+
+xval <- seq(0,max(lt$myVar),len=length(lt$myVar))
+
+stat <- stat_function(aes(x = xval, y = ..y..),
+                      fun = dnorm, 
+                      color="red",
+                      n = length(lt$myVar), 
+                      args = list(mean = meanML, sd = sdML))
+```
+
+Create new dataset with beta maximum likelihood parameters
+```{r}
+new_dat <- data.frame(rbeta(n = 147, shape1 = shp1, shape2 = shp2))
+colnames(new_dat) <- "myVar"
+
+pSpecial2 <- ggplot(data=new_dat, aes(x=myVar, y=..density..)) +
+  geom_histogram(color="grey60",fill="cornsilk",size=0.2) + 
+  xlim(c(0,1)) +
+  geom_density(size=0.75,linetype="dotted")
+
+# Maximum likelihood parameters for beta distribution
+betaPars_2 <- fitdistr(x=new_dat$myVar/max(new_dat$myVar + 0.1),
+                       start=list(shape1=1,shape2=2),"beta")
+shape1ML_2 <- betaPars_2$estimate["shape1"]; shape1ML_2
+shape2ML_2 <- betaPars_2$estimate["shape2"]; shape2ML_2
+
+statSpecial_2 <- stat_function(aes(x = xval, y = ..y..), 
+                             fun = dbeta, color="orchid",
+                             n = length(new_dat$myVar), 
+                             args = list(shape1=shape1ML_2,shape2=shape2ML_2))
+
+par(mfrow = c(2,1))
+pSpecial + statSpecial
+pSpecial2 + statSpecial_2
+```
+
+The histograms from the two datasets appear to have similar shapes based on skewness, but the data from the new dataset are much more evenly spread out than the original data. Based on this, the model appears to overrepresnt many bins while under-representing the most frequent bins from the main model.

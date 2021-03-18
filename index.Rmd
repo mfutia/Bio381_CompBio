@@ -18,16 +18,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Weeks 1-2: 
 *No assignments due*
 
-### Week 3: 
+### Week 3:   
 [Homework 3](Homework/Homework3.html)
 
-### Week 4: 
+### Week 4:   
 [Homework 4: Typora](Homework/Homework4/Homework4_Typora.html)   
 [Homework 4: Letter Template](Homework/Homework4/Homework4_Letter.pdf)   
 [Homework 4: BeamerTemplate](Homework/Homework4/Homework4_Beamer.pdf)
 
-### Week 5:
+### Week 5:   
 [Homework 5: Vectors in R](Homework/Homework5_Futia.html)
 
-### Week 6:
+### Week 6:   
 [Homework 6: Matrices Lists and Dataframes in R](Homework/Homework6_Futia.html)
+
+### Week 7:   
+[Homework 7: Data Distributions in R](Homework/Homework7_Futia.html)
