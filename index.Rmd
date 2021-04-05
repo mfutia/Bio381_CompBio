@@ -34,3 +34,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Week 7:   
 [Homework 7: Data Distributions in R](Homework/Homework7_Futia.html)
+
+### Week 8: 
+*No assignment due*
+
+### Week 9:   
+[Homework 8: Exploring Hypotheses](Homework/Homework8_Futia.html)
