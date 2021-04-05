@@ -1,0 +1,152 @@
+---
+title: "Homework 8: Data Exploration"
+author: "Matt Futia"
+date: "3/31/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Study background
+
+Investigating the correlation between *Mysis diluviana* density in benthic habitats and time of day
+
+- *M. diluviana* are known to have a diel vertical migration in which  individuals remain at the bottom during the day (predator avoidance) and many but not all migrate into the water column during the night to feed.
+
+- For this fake data set, samples will have been collected from the bottom across six times during a 24 hour period (01:00, 05:00, 09:00, 13:00, 17:00, 21:00). This process was repeated across 40 times during the summer season. Samples were collected with 10 minute benthic sled tows.
+
+- The number of individuals collected at each time period on each day were recorded.
+
+
+```{r include=F}
+# Open libraries
+library(ggplot2) # for graphics
+library(reshape2)
+library(tidyverse)
+```
+
+
+### Generate practice data
+```{r}
+set.seed(123) # only included for showing significance after running the model multiple times for later comparisons
+t01 <- rnorm(n=40,mean=180, sd = 40)
+t05 <- rnorm(n=40,mean=210, sd = 60)
+t09 <- rnorm(n=40,mean=440, sd = 50)
+t13 <- rnorm(n=40,mean=500, sd = 30)
+t17 <- rnorm(n=40,mean=470, sd = 60)
+t21 <- rnorm(n=40,mean=280, sd = 80)
+
+total <- data.frame(t01,t05,t09,t13,t17,t21)
+total$id <- 1:nrow(total)
+
+total_long <- melt(total, id.vars="id")
+colnames(total_long) <- c("id", "time", "density")
+```
+
+Sampling methods and results (mean and standard deviation) were derived from methods and densities described in published studies. Standard deviation values were estimated based on summer diurnal light cycles and hypothesized migration timing of *M. diluviana*.
+
+
+### Compare *M. diluviana* density across times with ANOVA
+```{r}
+p1 <- ggplot(total_long, aes(time, density))+
+  geom_boxplot()+
+  theme_classic()
+p1
+
+test <- aov(density~time, total_long)
+summary(test)
+TukeyHSD(test, group = T) 
+```
+
+Running the model multiple times with the same conditions (i.e., mean, sample size, and standard deviation) demonstrated three general  groups with significant differences (p < 0.05) in *M. diluviana* density. A low density grouping included the t01 and t05 samples, an intermediate density included t21, and a high density group included t09, t13, and t17. However, significance among times within the low and high density groups was inconsistent across repeated models and, similarly, the intermediate density time (t21) occasionally had no significant difference from the t05 sample from the low density group.
+
+
+#### Plot with significance (for fixed data)
+```{r}
+sig <- c("d","d","b","a","ab","c")  
+
+p2 <- p1 +
+  annotate(geom = "text",
+           x = unique(total_long$time),y = max(total_long$density)+25,
+           label = sig)
+
+p2
+```
+
+
+#### Re-run practice data with adjusted means
+```{r}
+# adjust mean values within groups to a difference between 10 and 50
+t01_m <- rnorm(n=40,mean=190, sd = 40)
+t05_m <- rnorm(n=40,mean=200, sd = 60) # difference in density of 10 from t01 and 50 from t21
+t09_m <- rnorm(n=40,mean=450, sd = 50) # difference in density of 40 from t13 and 10 from t17
+t13_m <- rnorm(n=40,mean=490, sd = 30) # difference in density of 30 from t17
+t17_m <- rnorm(n=40,mean=460, sd = 60)
+t21_m <- rnorm(n=40,mean=250, sd = 80)
+
+total_m <- data.frame(t01_m,t05_m,t09_m,t13_m,t17_m,t21_m)
+total_m$id <- 1:nrow(total_m)
+
+total_long_m <- melt(total_m, id.vars="id")
+colnames(total_long_m) <- c("id", "time", "density")
+
+test_m <- aov(density~time, total_long_m)
+summary(test_m)
+TukeyHSD(test_m)
+```
+
+Decreasing the difference among mean values within group to 10 eliminated significant differences within density groups. Differences in density of 30 and 40 had inconsistent statistical significance, although density differences of 30 were significant less frequently than differences of 40. Lastly, differences in density of 50 always had significant differences. These results, however, are also influenced by the differences in standard deviation of among sampling events.
+
+
+#### Re-run practice data with adjusted sample size
+```{r}
+# 50% sample effort
+t01_n20 <- rnorm(n=20,mean=180, sd = 40)
+t05_n20 <- rnorm(n=20,mean=210, sd = 60)
+t09_n20 <- rnorm(n=20,mean=440, sd = 50)
+t13_n20 <- rnorm(n=20,mean=500, sd = 30)
+t17_n20 <- rnorm(n=20,mean=470, sd = 60)
+t21_n20 <- rnorm(n=20,mean=280, sd = 80)
+
+total_n20 <- data.frame(t01_n20,t05_n20,t09_n20,t13_n20,t17_n20,t21_n20)
+total_n20$id <- 1:nrow(total_n20)
+
+total_long_n20 <- melt(total_n20, id.vars="id")
+colnames(total_long_n20) <- c("id", "time", "density")
+
+test_n20 <- aov(density~time, total_long_n20)
+summary(test_n20)
+TukeyHSD(test_n20)
+
+ggplot(total_long_n20, aes(time, density))+
+  geom_boxplot()+
+  theme_classic()
+```
+
+```{r}
+# 200% sample effort
+t01_n80 <- rnorm(n=80,mean=180, sd = 40)
+t05_n80 <- rnorm(n=80,mean=210, sd = 60)
+t09_n80 <- rnorm(n=80,mean=440, sd = 50)
+t13_n80 <- rnorm(n=80,mean=500, sd = 30)
+t17_n80 <- rnorm(n=80,mean=470, sd = 60)
+t21_n80 <- rnorm(n=80,mean=280, sd = 80)
+
+total_n80 <- data.frame(t01_n80,t05_n80,t09_n80,t13_n80,t17_n80,t21_n80)
+total_n80$id <- 1:nrow(total_n80)
+
+total_long_n80 <- melt(total_n80, id.vars="id")
+colnames(total_long_n80) <- c("id", "time", "density")
+
+test_n80 <- aov(density~time, total_long_n80)
+summary(test_n80)
+TukeyHSD(test_n80)
+
+ggplot(total_long_n80, aes(time, density))+
+  geom_boxplot()+
+  theme_classic()
+```
+
+While lowering sample size made statistical differences among sample densities less consistent (i.e., differences in densities within groups were more variable), doubling the sampling effort increased significance (i.e., lower p-value) resulting in more frequent statistical differences in density.
