@@ -94,7 +94,7 @@ test_sig <- function(file, dat, group) {
   # extract p value
   p = summary(test)[[1]][["Pr(>F)"]][[1]]
   
-  return(c("anova_p" = p, sig_diff = diff))
+  return("anova_p" = p)
 }
  
 sig <- test_sig(file = mysis, 

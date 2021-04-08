@@ -296,7 +296,7 @@ test_sig &lt;- function(file, dat, group) {
   # extract p value
   p = summary(test)[[1]][[&quot;Pr(&gt;F)&quot;]][[1]]
   
-  return(c(&quot;anova_p&quot; = p, sig_diff = diff))
+  return(&quot;anova_p&quot; = p)
 }
  
 sig &lt;- test_sig(file = mysis, 
@@ -304,14 +304,7 @@ sig &lt;- test_sig(file = mysis,
          group = mysis$time)
 
 sig</code></pre>
-<pre><code>## $anova_p
-## [1] 3.322142e-97
-## 
-## $sig_diff
-## function (x, ...) 
-## UseMethod(&quot;diff&quot;)
-## &lt;bytecode: 0x0000000013eae410&gt;
-## &lt;environment: namespace:base&gt;</code></pre>
+<pre><code>## [1] 3.322142e-97</code></pre>
 
 
 
