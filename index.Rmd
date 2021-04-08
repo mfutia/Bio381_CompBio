@@ -40,3 +40,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Week 9:   
 [Homework 8: Exploring Hypotheses](Homework/Homework8_Futia.html)
+
+### Week 10:
+[Homework 9: Structured Programming](Homework/Homework9_Futia.html)

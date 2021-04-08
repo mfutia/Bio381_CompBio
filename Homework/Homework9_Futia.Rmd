@@ -1,0 +1,106 @@
+---
+title: 'Homework 9: Structured Programming'
+author: "Matt Futia"
+date: "4/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Re-organize fake data set from HW 8 using structured programming
+# Created by MHF
+# 07 April 2021
+#----------------------------------------
+# Create functions for loading and working with data
+######################################
+# load packages
+library(tidyverse)
+library(data.table)
+######################################
+# FUNCTION: get_data
+# load data from working directory
+# input: file name
+# output: object saved to global environment
+get_data <- function(wd, file) {
+  setwd(paste0("C:/Users/mttft/Desktop/UVM/UVM Courses/Comp_Bio/FutiaBio381/", wd))
+  x = read.csv(file)
+  return(x)
+}
+######################################
+# FUNCTION: summarize_data
+# summarize data based on set functions
+# input: data frame, response variable, grouping variable, grouping variable name, response variable name  
+# output: list of summary statistics
+summarize_data <- function(file, dat, group, xvar, yvar) {
+     n = aggregate(dat~group,data = file, FUN = length)
+     colnames(n) = c(xvar,paste0("n_",yvar))
+
+     x = aggregate(dat~group, data = file, FUN = mean)
+     colnames(x) = c(xvar, paste0("mean_",yvar))
+
+     sd = aggregate(dat~group, data = file, FUN = sd)
+     colnames(sd) = c(xvar, paste0("sd_",yvar))
+
+     return(Reduce(function(x, y) merge(x, y, all=TRUE), list(n, x, sd)))
+}
+ 
+######################################
+# FUNCTION: plot_data
+# create box plot of data
+# input: data frame, response variable, grouping variable, grouping variable name, response variable name
+# output: box plot with set theme
+plot_data <- function(file, xvar, yvar, xname, yname) {
+  p = ggplot(file, aes(xvar, yvar))+
+    geom_boxplot()+
+    xlab(xname) +
+    ylab(yname) +
+    theme_classic()
+  return(p)
+}
+######################################
+# load data
+mysis <- get_data(wd = "Homework", 
+                  file = "mysis_data.csv")
+
+# summarize data
+mysis_sum <- summarize_data(file = mysis, 
+                            dat = mysis$density, 
+                            group = mysis$time, 
+                            xvar = "time", 
+                            yvar = "density")
+
+# plot data
+plot_mysis <- plot_data(file = mysis,
+                        xvar = mysis$time,
+                        yvar = mysis$density,
+                        xname = "Time",
+                        yname = "Density")
+
+plot_mysis
+
+
+# Create similar function to further analyze data
+######################################
+# FUNCTION: test_sig
+# test statistical significance of the code using ANOVA
+# input: data frame, response variable, grouping variable
+# output: ANOVA results and pairwise significance based on Tukey HSD test
+test_sig <- function(file, dat, group) {
+  # run ANOVA
+  test = aov(dat~group,data = file)
+  # extract p value
+  p = summary(test)[[1]][["Pr(>F)"]][[1]]
+  
+  return(c("anova_p" = p, sig_diff = diff))
+}
+ 
+sig <- test_sig(file = mysis, 
+         dat = mysis$density, 
+         group = mysis$time)
+
+sig
+```
+
