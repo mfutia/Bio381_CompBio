@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # load packages
 library(tidyverse)
 library(data.table)
+library(multcomp)  # glht() and cld()
 ######################################
 # FUNCTION: get_data
 # load data from working directory
@@ -26,7 +27,7 @@ library(data.table)
 # output: object saved to global environment
 get_data <- function(wd, file) {
   setwd(paste0("C:/Users/mttft/Desktop/UVM/UVM Courses/Comp_Bio/FutiaBio381/", wd))
-  x = read.csv(file)
+  x <- read.csv(file)
   return(x)
 }
 ######################################
@@ -35,14 +36,14 @@ get_data <- function(wd, file) {
 # input: data frame, response variable, grouping variable, grouping variable name, response variable name  
 # output: list of summary statistics
 summarize_data <- function(file, dat, group, xvar, yvar) {
-     n = aggregate(dat~group,data = file, FUN = length)
-     colnames(n) = c(xvar,paste0("n_",yvar))
+     n <- aggregate(dat~group,data = file, FUN = length)
+     colnames(n) <- c(xvar,paste0("n_",yvar))
 
-     x = aggregate(dat~group, data = file, FUN = mean)
-     colnames(x) = c(xvar, paste0("mean_",yvar))
+     x <- aggregate(dat~group, data = file, FUN = mean)
+     colnames(x) <- c(xvar, paste0("mean_",yvar))
 
-     sd = aggregate(dat~group, data = file, FUN = sd)
-     colnames(sd) = c(xvar, paste0("sd_",yvar))
+     sd <- aggregate(dat~group, data = file, FUN = sd)
+     colnames(sd) <- c(xvar, paste0("sd_",yvar))
 
      return(Reduce(function(x, y) merge(x, y, all=TRUE), list(n, x, sd)))
 }
@@ -53,7 +54,7 @@ summarize_data <- function(file, dat, group, xvar, yvar) {
 # input: data frame, response variable, grouping variable, grouping variable name, response variable name
 # output: box plot with set theme
 plot_data <- function(file, xvar, yvar, xname, yname) {
-  p = ggplot(file, aes(xvar, yvar))+
+  p <- ggplot(file, aes(xvar, yvar))+
     geom_boxplot()+
     xlab(xname) +
     ylab(yname) +
@@ -89,18 +90,53 @@ plot_mysis
 # input: data frame, response variable, grouping variable
 # output: ANOVA results and pairwise significance based on Tukey HSD test
 test_sig <- function(file, dat, group) {
-  # run ANOVA
-  test = aov(dat~group,data = file)
-  # extract p value
-  p = summary(test)[[1]][["Pr(>F)"]][[1]]
+  #convert grouping variable to factor for glht
+  group <- as.factor(group)
   
-  return("anova_p" = p)
+  # run ANOVA
+  test <- aov(dat~group,data = file)
+  # extract p value
+  p <- summary(test)[[1]][["Pr(>F)"]][[1]]
+  
+  # extract significant pairwise differences
+  tuk <- glht(test, linfct = mcp(group = "Tukey"))
+  tuk_sig <- cld(tuk)
+  return(c("anova_p" = p, sig_dif = list(tuk_sig)))
 }
- 
+######################################
+# FUNCTION: plot_sig
+# plot data with significance listed
+# input: data frame, response variable, grouping variable, grouping variable name, response variable name
+# output: box plot with set theme
+plot_sig <- function(file, xvar, yvar, xname, yname, sig) {
+  # extract significance letters from test_sig output
+  lttrs <- sig$sig_dif$mcletters$Letters
+  lttrs_df <- data.frame(lttrs)
+  lttrs_dt <- setDT(lttrs_df, keep.rownames = T)
+  colnames(lttrs_dt) <- c(xname,"cld")
+  
+  # create column for letter placement
+  lttrs_dt$yloc <- max(yvar + 30)
+  # update plot with letters
+  p2 = plot_data(file, xvar, yvar, xname, yname) +
+    geom_text(data = lttrs_dt,
+              aes(x = unique(xvar), y = yloc, label = cld),
+              position = position_dodge(width = .75))
+  return(p2)
+}
+######################################
+# get significance
 sig <- test_sig(file = mysis, 
          dat = mysis$density, 
          group = mysis$time)
-
 sig
-```
 
+# plot with significance
+p2 <- plot_sig(file = mysis,
+               xvar = mysis$time,
+               yvar = mysis$density,
+               xname = "time",
+               yname = "density",
+               sig = sig)
+p2
+```
