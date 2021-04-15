@@ -1,0 +1,124 @@
+---
+title: "Homework 10: For loops and randomization tests"
+author: "Matt Futia"
+date: "4/14/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# load packages
+library(tidyverse)
+```
+
+Problem 1: Using a for loop, write a function to calculate the number of zeroes in a numeric vector.
+```{r}
+######################################
+# FUNCTION: num_zero
+# count the number of zeros in a numeric vector
+# input: vector
+# output: counter
+######################################
+num_zero <- function(vector) {
+  counter <- 0
+  for (i in 1:length(vector)){
+    if(vector[i] == 0){
+      counter <- counter+1
+    } 
+  }
+  return(counter)
+}
+######################################
+v1 <- sample(0:9, 100, replace = T)
+num_zero(v1)
+```
+
+
+Problem 2: Count zeros by subsetting in a single line of code. 
+```{r}
+length(v1 %>% .[. == 0])
+```
+
+
+Problem 3: Write a function that takes as input two integers representing the number of rows and columns in a matrix. The output is a matrix of these dimensions in which each element is the product of the row number x the column number.
+```{r}
+######################################
+# FUNCTION: build_matrix
+# build an x,y matrix with elements equal to the product of the respective row and column number
+# input: dims # vector of two integers representing matrix dimensions
+# output: mat1 # complete matrix with set elements
+######################################
+build_matrix <- function(dims) {
+  mat1 <- matrix(nrow = dims[1], ncol = dims[2])
+  for (i in 1:nrow(mat1)){
+    for(j in 1:ncol(mat1)){
+      mat1[i,j] = i*j
+    }
+  }
+  return(mat1)
+}
+######################################
+dims <- c(sample(1:10,1),sample(1:10,1))
+mat1 = build_matrix(dims)
+mat1
+```
+
+
+Problem 4: Design and conduct a randomization test for some of your own data.
+```{r}
+######################################
+# FUNCTION: get_data
+# load data from working directory
+# input: file name
+# output: object saved to global environment
+get_data <- function(wd, file) {
+  setwd(paste0("C:/Users/mttft/Desktop/UVM/UVM Courses/Comp_Bio/FutiaBio381/", wd))
+  x <- read.csv(paste0(file,".csv"))
+  return(x)
+}
+######################################
+# FUNCTION: shuffleData
+# randomize data for regression analysis
+# input: 3-column data frame (data)
+# output: 3-column data frame (data2)
+shuffleData <- function(data) {
+               data2 <- data  
+               data2[,3] <- sample(data[,3]) # use sample function with defaults to reshuffle column
+                return(data2)
+}
+##################################################
+# FUNCTION: getMetric
+# calculate metric for randomization test
+# input: 3-column data frame for regression (data)
+# output: p value for regression slope (pval)
+getMetric <- function(data) {
+                mod1 <- lm(data[,3]~data[,2])
+                sum <- summary(mod1)
+                pval <- sum$coefficients[2,4]
+                return(pval)
+}
+##################################################
+# load data
+trout <- get_data(wd = "",file = "lt_metrics")
+
+# randomize data
+set.seed(1234)
+shuf_trt <- shuffleData(trout)
+
+# get p value of regression slope
+getMetric(shuf_trt)
+```
+
+With a p value of 0.253, the null hypothesis (slope = 0; no relationship between the two variables) is not rejected.
+
+
+Problem 5: For comparison, calculate in R the standard statistical analysis you would use with these data. How does the p-value compare for the standard test versus the p value you estimated from your randomization test? If the p values seem very different, run the program again with a different starting seed (and/or increase the number of replications in your randomization test). If there are persistent differences in the p value of the standard test versus your randomization, what do you think is responsible for this difference?
+```{r}
+getMetric(trout)
+```
+
+The p values for the standard analysis (original data) and randomization analysis (shuffled data) were very different, with a strongly significant positive slope from the standard analysis and insignificant slope for the randomization analysis, regardless of the set seed. This is likely do to the strong correlation between the two variables being analyzed: lake trout total length and weight. As length increases in the fish, so does their mass.
+
