@@ -112,7 +112,7 @@ shuf_trt <- shuffleData(trout)
 getMetric(shuf_trt)
 ```
 
-With a p value of 0.253, the null hypothesis (slope = 0; no relationship between the two variables) is not rejected.
+*With a p value of 0.253, the null hypothesis (slope = 0; no relationship between the two variables) is not rejected.*
 
 
 Problem 5: For comparison, calculate in R the standard statistical analysis you would use with these data. How does the p-value compare for the standard test versus the p value you estimated from your randomization test? If the p values seem very different, run the program again with a different starting seed (and/or increase the number of replications in your randomization test). If there are persistent differences in the p value of the standard test versus your randomization, what do you think is responsible for this difference?
@@ -120,5 +120,5 @@ Problem 5: For comparison, calculate in R the standard statistical analysis you 
 getMetric(trout)
 ```
 
-The p values for the standard analysis (original data) and randomization analysis (shuffled data) were very different, with a strongly significant positive slope from the standard analysis and insignificant slope for the randomization analysis, regardless of the set seed. This is likely do to the strong correlation between the two variables being analyzed: lake trout total length and weight. As length increases in the fish, so does their mass.
+*The p values for the standard analysis (original data) and randomization analysis (shuffled data) were very different, with a strongly significant positive slope from the standard analysis and insignificant slope for the randomization analysis, regardless of the set seed. This is likely do to the strong correlation between the two variables being analyzed: lake trout total length and weight. As length increases in the fish, so does their mass.*
 

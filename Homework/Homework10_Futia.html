@@ -226,10 +226,10 @@ num_zero &lt;- function(vector) {
 ######################################
 v1 &lt;- sample(0:9, 100, replace = T)
 num_zero(v1)</code></pre>
-<pre><code>## [1] 8</code></pre>
+<pre><code>## [1] 13</code></pre>
 <p>Problem 2: Count zeros by subsetting in a single line of code.</p>
 <pre class="r"><code>length(v1 %&gt;% .[. == 0])</code></pre>
-<pre><code>## [1] 8</code></pre>
+<pre><code>## [1] 13</code></pre>
 <p>Problem 3: Write a function that takes as input two integers representing the number of rows and columns in a matrix. The output is a matrix of these dimensions in which each element is the product of the row number x the column number.</p>
 <pre class="r"><code>######################################
 # FUNCTION: build_matrix
@@ -250,15 +250,13 @@ build_matrix &lt;- function(dims) {
 dims &lt;- c(sample(1:10,1),sample(1:10,1))
 mat1 = build_matrix(dims)
 mat1</code></pre>
-<pre><code>##      [,1] [,2] [,3]
-## [1,]    1    2    3
-## [2,]    2    4    6
-## [3,]    3    6    9
-## [4,]    4    8   12
-## [5,]    5   10   15
-## [6,]    6   12   18
-## [7,]    7   14   21
-## [8,]    8   16   24</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,]    1    2    3    4    5    6    7    8    9    10
+## [2,]    2    4    6    8   10   12   14   16   18    20
+## [3,]    3    6    9   12   15   18   21   24   27    30
+## [4,]    4    8   12   16   20   24   28   32   36    40
+## [5,]    5   10   15   20   25   30   35   40   45    50
+## [6,]    6   12   18   24   30   36   42   48   54    60</code></pre>
 <p>Problem 4: Design and conduct a randomization test for some of your own data.</p>
 <pre class="r"><code>######################################
 # FUNCTION: get_data
@@ -302,11 +300,11 @@ shuf_trt &lt;- shuffleData(trout)
 # get p value of regression slope
 getMetric(shuf_trt)</code></pre>
 <pre><code>## [1] 0.8600101</code></pre>
-<p>With a p value of 0.253, the null hypothesis (slope = 0; no relationship between the two variables) is not rejected.</p>
+<p><em>With a p value of 0.253, the null hypothesis (slope = 0; no relationship between the two variables) is not rejected.</em></p>
 <p>Problem 5: For comparison, calculate in R the standard statistical analysis you would use with these data. How does the p-value compare for the standard test versus the p value you estimated from your randomization test? If the p values seem very different, run the program again with a different starting seed (and/or increase the number of replications in your randomization test). If there are persistent differences in the p value of the standard test versus your randomization, what do you think is responsible for this difference?</p>
 <pre class="r"><code>getMetric(trout)</code></pre>
 <pre><code>## [1] 1.163794e-20</code></pre>
-<p>The p values for the standard analysis (original data) and randomization analysis (shuffled data) were very different, with a strongly significant positive slope from the standard analysis and insignificant slope for the randomization analysis, regardless of the set seed. This is likely do to the strong correlation between the two variables being analyzed: lake trout total length and weight. As length increases in the fish, so does their mass.</p>
+<p><em>The p values for the standard analysis (original data) and randomization analysis (shuffled data) were very different, with a strongly significant positive slope from the standard analysis and insignificant slope for the randomization analysis, regardless of the set seed. This is likely do to the strong correlation between the two variables being analyzed: lake trout total length and weight. As length increases in the fish, so does their mass.</em></p>
 
 
 
