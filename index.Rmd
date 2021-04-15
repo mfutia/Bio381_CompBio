@@ -43,3 +43,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Week 10:
 [Homework 9: Structured Programming](Homework/Homework9_Futia.html)
+
+### Week 11:
+[Homework 10: For loops and randomization tests](Homework/Homework10_Futia.html)
