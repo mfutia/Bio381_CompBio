@@ -100,8 +100,15 @@ test_sig <- function(file, dat, group) {
   
   # extract significant pairwise differences
   tuk <- glht(test, linfct = mcp(group = "Tukey"))
-  tuk_sig <- cld(tuk)
-  return(c("anova_p" = p, sig_dif = list(tuk_sig)))
+  pair_sig <- cld(tuk)
+  
+  return(c("anova_p" = p, "sig_dif" = if (p > 0.05){
+    message("ANOVA p value > 0.05; pairwise differences not explored")
+  }
+  else {
+    list(pair_sig)
+    }))
+
 }
 ######################################
 # FUNCTION: plot_sig
@@ -126,10 +133,10 @@ plot_sig <- function(file, xvar, yvar, xname, yname, sig) {
 }
 ######################################
 # get significance
-sig <- test_sig(file = mysis, 
+signif <- test_sig(file = mysis, 
          dat = mysis$density, 
          group = mysis$time)
-sig
+signif
 
 # plot with significance
 p2 <- plot_sig(file = mysis,
@@ -137,6 +144,6 @@ p2 <- plot_sig(file = mysis,
                yvar = mysis$density,
                xname = "time",
                yname = "density",
-               sig = sig)
+               sig = signif)
 p2
 ```
