@@ -1,0 +1,96 @@
+---
+title: "Homework 12: Plotting with ggplot"
+author: "Matt Futia"
+date: "5/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(patchwork)
+library(magrittr)
+library(lemon)
+```
+
+Load data
+```{r}
+mysis <- read.csv("~/Desktop/UVM/UVM Courses/Comp_Bio/FutiaBio381/Homework/mysis_data.csv")
+mysis$time %<>% as.factor()
+```
+
+Plot data with ggplot
+```{r}
+# Quick plot
+qplot(mysis$time, mysis$density, geom = c("boxplot", "point"))
+
+# Scatter plot
+sp <- ggplot(mysis, aes(x = time, y = density))+
+  geom_point(shape = 1, 
+             position = position_jitter(width = 0.1, height = 0.7))+
+  xlab("Time")+
+  ylab("Density")+
+  theme_bw()
+
+# Boxplot with points
+spb <- sp +
+  geom_boxplot(aes(fill = time), alpha = 0.3, outlier.shape = NA)+
+  scale_fill_manual(values = c('#252525',
+                               '#8c2d04',
+                               '#fe9929',
+                               '#fee391',
+                               '#fe9929',
+                               '#8c2d04'))
+
+# View together with patchwork
+sp + spb +
+  plot_layout(ncol = 2) +
+  plot_annotation("Mysis density over 24 hr")
+
+# View times individually with lemon::facet_rep_wrap
+times <- c(t01 = "01:00",
+           t05 = "05:00",
+           t09 = "09:00", 
+           t13 = "13:00", 
+           t17 = "17:00", 
+           t21 = "21:00")
+
+spb +
+  facet_rep_wrap(.~time, 
+                 scales = "fixed", 
+                 repeat.tick.labels = F,
+                 labeller=as_labeller(times)) +
+  theme(panel.background = element_blank(),
+        strip.background = element_blank(),
+        panel.spacing = unit(1.5, "lines"),
+        axis.text.x = element_text(angle = 45, hjust=1))
+```
+
+Add lines and annotations to plot
+```{r}
+# Add line for average density
+spb_a <- spb +
+  geom_hline(yintercept = mean(mysis$density), linetype = "dashed", color = "red")
+
+# Add annotation for times with significant difference in density
+library(multcomp)
+test <- aov(density~time, data = mysis)
+tuk <- glht(test, linfct = mcp(time = "Tukey"))
+pair_sig <- cld(tuk)
+sig <- data.frame(pair_sig$mcletters$Letters)
+colnames(sig) <- "lttrs"
+
+spb_as <- spb_a +
+  geom_text(data = sig,
+            aes(x = unique(mysis$time), 
+                  y = max(mysis$density)+30, 
+                  label = lttrs),
+            position = position_dodge(width = .75))
+spb_as
+```
+
+
+
