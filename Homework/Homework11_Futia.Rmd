@@ -142,11 +142,9 @@ regStats <- function(dat=data,
   d_LT <- filter(dat, species %in% spp)
   
   # calculate number of total observations by fish type and basin  
-  # d_sum <- aggregate(dtct~group, data = d_LT, FUN = length)
-
   d_sum <- d_LT %>%
-   group_by(d_LT$group) %>%
-   summarise(total_obs = length(d_LT$dtct)) %>%
+   group_by(.data[[group]]) %>%
+   summarise(total_obs = n()) %>%
    ungroup()
 
   d_sum <- data.frame(d_sum)
@@ -178,7 +176,8 @@ dir.create(fileFolder)
 load_data(wd_files = path_tele,
           wd_end = path_bio381)
 fileNames <- list.files(path=fileFolder)
-nFiles <- length(list.files(path=fileFolder))
+fileNames <- fileNames[grepl("ranFile", fileNames) & grepl(".csv", fileNames)] 
+nFiles <- length(fileNames)
 
 # Create data frame to hold file summary statistics
 ID <- seq_along(fileNames)
@@ -204,25 +203,26 @@ for (i in seq_along(fileNames)) {
   statsOut[i,3:5] <- unlist(.) # unlist, copy into last 3 columns
   
 }
+
 # set up output file and incorporate time stamp and minimal metadata
-  write.table(cat("# Summary stats for ",
-                    "batch processing of ANOVA models","\n",
-                    "# timestamp: ",as.character(Sys.time()),"\n",
-                    "# MHF","\n",
-                    "# ------------------------", "\n",
-                    "\n",
-                    file=fileOut,
-                    row.names="",
-                    col.names="",
-                    sep=""))
+write.table(cat("# Summary stats for ",
+                "batch processing of ANOVA models","\n",
+                "# timestamp: ",as.character(Sys.time()),"\n",
+                "# MHF","\n",
+                "# ------------------------", "\n",
+                "\n",
+                file=paste(fileFolder,fileOut,sep = ""),
+                row.names="",
+                col.names="",
+                sep=""))
   
 # now add the data frame
-  write.table(x=statsOut,
-              file=fileOut,
-              row.names=FALSE,
-              col.names=TRUE,
-              sep=",",
-              append=TRUE)
+write.table(x=statsOut,
+            file=fileOut,
+            row.names=FALSE,
+            col.names=TRUE,
+            sep=",",
+            append=TRUE)
 ```
 
 
