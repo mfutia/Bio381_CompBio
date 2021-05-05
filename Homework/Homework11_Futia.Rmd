@@ -152,9 +152,9 @@ regStats <- function(dat=data,
   # run regression
   . <- lm(data=d_sum,d_sum[,2]~d_sum[,1])
   . <- summary(.)
-  statsList <- list(Slope=.$coefficients[2,1],
-                    pVal=.$coefficients[2,4],
-                    r2=.$r.squared)
+  statsList <- list(Slope=round(.$coefficients[2,1],3),
+                    pVal=round(.$coefficients[2,4],3),
+                    r2=round(.$r.squared,3))
   return(statsList)
 }
 ```
@@ -203,6 +203,8 @@ for (i in seq_along(fileNames)) {
   statsOut[i,3:5] <- unlist(.) # unlist, copy into last 3 columns
   
 }
+
+statsOut
 
 # set up output file and incorporate time stamp and minimal metadata
 write.table(cat("# Summary stats for ",

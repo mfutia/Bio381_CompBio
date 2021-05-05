@@ -353,9 +353,9 @@ regStats &lt;- function(dat=data,
   # run regression
   . &lt;- lm(data=d_sum,d_sum[,2]~d_sum[,1])
   . &lt;- summary(.)
-  statsList &lt;- list(Slope=.$coefficients[2,1],
-                    pVal=.$coefficients[2,4],
-                    r2=.$r.squared)
+  statsList &lt;- list(Slope=round(.$coefficients[2,1],3),
+                    pVal=round(.$coefficients[2,4],3),
+                    r2=round(.$r.squared,3))
   return(statsList)
 }</code></pre>
 <p>Body of script for batch processing of regression models</p>
@@ -427,7 +427,17 @@ for (i in seq_along(fileNames)) {
   
 }
 
-# set up output file and incorporate time stamp and minimal metadata
+statsOut</code></pre>
+<pre><code>##   ID           fileName   slope  pVal    r2
+## 1  1 ranFileAut2014.csv  -3.399 0.779 0.002
+## 2  2 ranFileAut2015.csv   3.839 0.865 0.001
+## 3  3 ranFileAut2016.csv   5.920 0.644 0.007
+## 4  4 ranFileAut2017.csv -11.328 0.433 0.039
+## 5  5 ranFileSpr2014.csv -32.873 0.235 0.070
+## 6  6 ranFileSpr2015.csv  11.257 0.702 0.003
+## 7  7 ranFileSpr2016.csv -23.415 0.559 0.008
+## 8  8 ranFileSpr2017.csv  13.027 0.350 0.026</code></pre>
+<pre class="r"><code># set up output file and incorporate time stamp and minimal metadata
 write.table(cat(&quot;# Summary stats for &quot;,
                 &quot;batch processing of ANOVA models&quot;,&quot;\n&quot;,
                 &quot;# timestamp: &quot;,as.character(Sys.time()),&quot;\n&quot;,
